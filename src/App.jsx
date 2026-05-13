@@ -1,33 +1,134 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 export default function App() {
 
+  const API_URL =
+    import.meta.env.VITE_ONN_API_URL
+
   const [showChat, setShowChat] = useState(false)
+
+  const [sendingInquiry, setSendingInquiry] =
+    useState(false)
+
+  const [inquirySuccess, setInquirySuccess] =
+    useState(false)
+
+  const [jimLoading, setJimLoading] =
+    useState(false)
+
+  const [jimInput, setJimInput] =
+    useState("")
+
+  const [messages, setMessages] =
+    useState([])
+
+  const [mobileMenu, setMobileMenu] =
+    useState(false)
+
+  const messagesEndRef = useRef(null)
+
+  const [form, setForm] = useState({
+
+    name: "",
+    company: "",
+    phone: "",
+    email: "",
+    requirement: ""
+
+  })
+
+  const sessionId = useMemo(() => {
+
+    let existing =
+      localStorage.getItem("onn_jim_session")
+
+    if (!existing) {
+
+      existing =
+        "JIM-" +
+        Date.now()
+
+      localStorage.setItem(
+        "onn_jim_session",
+        existing
+      )
+
+    }
+
+    return existing
+
+  }, [])
 
   useEffect(() => {
 
     const timer = setTimeout(() => {
+
       setShowChat(true)
+
+      if (messages.length === 0) {
+
+        setMessages([
+
+          {
+
+            sender: "jim",
+
+            text:
+`Hello. I'm Jim.
+
+I help businesses understand ONN operational systems, ERP workflows, inventory visibility, dashboards, workflow automation, reporting systems, production tracking, and manufacturing operations.
+
+How can ONN assist your operational infrastructure today?`
+
+          }
+
+        ])
+
+      }
+
     }, 5000)
 
     return () => clearTimeout(timer)
 
   }, [])
 
+  useEffect(() => {
+
+    messagesEndRef.current?.scrollIntoView({
+
+      behavior: "smooth"
+
+    })
+
+  }, [messages])
+
   const products = [
 
     {
-      title: "ERP Layer",
+      title: "ERP Systems",
       price: "₹75K – ₹12L+",
       time: "4–16 Weeks",
       details: [
         "ERP Bridging",
-        "Google Sheets Sync",
-        "Approval Flows",
         "Allocation Systems",
-        "Issuance Logic",
-        "Vendor Panels",
-        "Excel Automation"
+        "Approval Systems",
+        "Issuance Workflows",
+        "Production Visibility",
+        "Google Sheets Sync"
+      ]
+    },
+
+    {
+      title: "Workflow Automation",
+      price: "₹15K – ₹4L+",
+      time: "1–8 Weeks",
+      details: [
+        "Approval Routing",
+        "Escalation Systems",
+        "Reminder Engines",
+        "Task Pipelines",
+        "Notification Logic",
+        "Operations Automation"
       ]
     },
 
@@ -36,68 +137,12 @@ export default function App() {
       price: "₹12K – ₹3L",
       time: "1–6 Weeks",
       details: [
-        "MIS Automation",
-        "Buyer Dashboards",
-        "Stock Reports",
-        "Email Reports",
-        "Data Cleaning",
-        "Production Reporting"
-      ]
-    },
-
-    {
-      title: "CRM Systems",
-      price: "₹25K – ₹4L+",
-      time: "2–10 Weeks",
-      details: [
-        "Lead Tracking",
-        "Sales Pipelines",
-        "WhatsApp CRM",
-        "Quotation Workflows",
-        "Activity Tracking",
-        "Email Integration"
-      ]
-    },
-
-    {
-      title: "Sales Automation",
-      price: "₹15K – ₹2.5L+",
-      time: "1–8 Weeks",
-      details: [
-        "Automated Outreach",
-        "Lead Routing",
-        "Proposal Generation",
-        "Follow-up Systems",
-        "Sales Reporting",
-        "Reminder Engines"
-      ]
-    },
-
-    {
-      title: "Dashboards",
-      price: "₹40K – ₹5L+",
-      time: "2–12 Weeks",
-      details: [
-        "KPI Dashboards",
-        "Production Monitoring",
+        "MIS Dashboards",
+        "Production Reports",
         "Factory Visibility",
-        "Live Stock Monitoring",
-        "Executive Panels",
-        "Role Access"
-      ]
-    },
-
-    {
-      title: "Notification Systems",
-      price: "₹10K – ₹1L+",
-      time: "1–4 Weeks",
-      details: [
-        "WhatsApp Alerts",
-        "Low Stock Warnings",
-        "Dispatch Alerts",
-        "Delay Notifications",
-        "Escalation Systems",
-        "Approval Reminders"
+        "Buyer Reporting",
+        "Analytics Systems",
+        "Executive Reporting"
       ]
     },
 
@@ -106,140 +151,384 @@ export default function App() {
       price: "₹1L – ₹50L+",
       time: "2–12 Months",
       details: [
-        "Trim Management",
-        "Factory Systems",
+        "Factory Platforms",
         "Vendor Portals",
-        "Dispatch Tracking",
-        "Compliance Systems",
-        "Production Control"
-      ]
-    },
-
-    {
-      title: "Mobile Apps",
-      price: "+₹50K / +₹75K",
-      time: "Addon",
-      details: [
-        "Android Apps",
-        "iOS Apps",
-        "Operational Mobility",
-        "Live Notifications",
-        "Mobile Dashboards",
-        "Workflow Apps"
+        "Production Tracking",
+        "Inventory Systems",
+        "Operational Intelligence",
+        "AI Infrastructure"
       ]
     }
 
   ]
 
+  async function submitInquiry() {
+
+    if (
+      !form.name ||
+      !form.phone ||
+      !form.requirement
+    ) {
+
+      alert(
+        "Please complete required fields."
+      )
+
+      return
+
+    }
+
+    try {
+
+      setSendingInquiry(true)
+
+      const response =
+        await fetch(API_URL, {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+
+            action:
+              "submit_inquiry",
+
+            ...form,
+
+            source:
+              window.location.href
+
+          })
+
+        })
+
+      const data =
+        await response.json()
+
+      if (data.success) {
+
+        setInquirySuccess(true)
+
+        setForm({
+
+          name: "",
+          company: "",
+          phone: "",
+          email: "",
+          requirement: ""
+
+        })
+
+      } else {
+
+        alert(
+          "Inquiry submission failed."
+        )
+
+      }
+
+    } catch (error) {
+
+      console.error(error)
+
+      alert(
+        "Server connection failed."
+      )
+
+    } finally {
+
+      setSendingInquiry(false)
+
+    }
+
+  }
+
+  async function sendJimMessage() {
+
+    if (!jimInput.trim()) return
+
+    const userMessage = {
+
+      sender: "user",
+      text: jimInput
+
+    }
+
+    setMessages(prev => [
+
+      ...prev,
+      userMessage
+
+    ])
+
+    const currentInput = jimInput
+
+    setJimInput("")
+
+    try {
+
+      setJimLoading(true)
+
+      const response =
+        await fetch(API_URL, {
+
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+
+            action:
+              "jim_message",
+
+            sessionId,
+
+            message:
+              currentInput,
+
+            source:
+              window.location.href
+
+          })
+
+        })
+
+      const data =
+        await response.json()
+
+      if (data.success) {
+
+        setMessages(prev => [
+
+          ...prev,
+
+          {
+
+            sender: "jim",
+
+            text: data.reply
+
+          }
+
+        ])
+
+      }
+
+    } catch (error) {
+
+      console.error(error)
+
+    } finally {
+
+      setJimLoading(false)
+
+    }
+
+  }
+
+  function scrollToSection(id) {
+
+    const element =
+      document.getElementById(id)
+
+    if (element) {
+
+      element.scrollIntoView({
+
+        behavior: "smooth"
+
+      })
+
+    }
+
+    setMobileMenu(false)
+
+  }
+
   return (
 
-    <div className="bg-black text-white overflow-x-hidden">
+    <div className="bg-[#020617] text-white overflow-x-hidden">
 
-      {/* STICKY NAVBAR */}
+      <div className="fixed inset-0 pointer-events-none">
 
-      <nav className="sticky top-0 z-[9999] flex items-center justify-between px-6 py-2 border-b border-white/10 bg-black/90 backdrop-blur-2xl">
+        <div className="absolute top-[-200px] left-1/2 -translate-x-1/2 w-[1000px] h-[1000px] bg-cyan-500/10 blur-[180px] rounded-full"></div>
 
-        <div className="flex items-center gap-4">
+      </div>
 
-          <img
-            src="/logo.png"
-            alt="ONN Logo"
-            className="w-20 md:w-24 h-auto object-contain"
-          />
+      {/* NAVBAR */}
 
-          <div>
+      <nav className="fixed top-0 left-0 w-full z-[99999] border-b border-white/10 bg-black/70 backdrop-blur-2xl">
 
-            <h1 className="text-lg md:text-2xl font-bold tracking-wide leading-tight">
-              Offices of Nawnit Nihal
-            </h1>
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
 
-            <p className="text-xs md:text-sm text-cyan-400">
-              Operational Software Systems
-            </p>
+          <div className="flex items-center gap-4">
+
+            <img
+              src="/logo.png"
+              alt="ONN"
+              className="w-16 md:w-20 object-contain"
+            />
+
+            <div>
+
+              <h1 className="font-black text-lg md:text-2xl tracking-wide">
+                Offices of Nawnit Nihal
+              </h1>
+
+              <p className="text-cyan-400 text-xs md:text-sm">
+                Operational Software Systems
+              </p>
+
+            </div>
 
           </div>
 
+          <div className="hidden md:flex items-center gap-8 text-sm text-white/70">
+
+            <button
+              onClick={() =>
+                scrollToSection("products")
+              }
+              className="hover:text-cyan-400 transition"
+            >
+              Products
+            </button>
+
+            <button
+              onClick={() =>
+                scrollToSection("systems")
+              }
+              className="hover:text-cyan-400 transition"
+            >
+              Systems
+            </button>
+
+            <button
+              onClick={() =>
+                scrollToSection("contact")
+              }
+              className="hover:text-cyan-400 transition"
+            >
+              Contact
+            </button>
+
+            <button
+              onClick={() =>
+                scrollToSection("contact")
+              }
+              className="bg-cyan-400 text-black px-5 py-2 rounded-xl font-bold hover:bg-cyan-300 transition"
+            >
+              Request Demo
+            </button>
+
+          </div>
+
+          <button
+            onClick={() =>
+              setMobileMenu(!mobileMenu)
+            }
+            className="md:hidden text-3xl"
+          >
+            ☰
+          </button>
+
         </div>
 
-        <div className="hidden md:flex gap-8 text-sm text-white/70">
+        {
+          mobileMenu && (
 
-          <a
-            href="#products"
-            className="hover:text-cyan-400 transition"
-          >
-            Products
-          </a>
+            <div className="md:hidden border-t border-white/10 px-6 py-4 bg-black/95 space-y-4">
 
-          <a
-            href="#systems"
-            className="hover:text-cyan-400 transition"
-          >
-            Systems
-          </a>
+              <button
+                onClick={() =>
+                  scrollToSection("products")
+                }
+                className="block w-full text-left"
+              >
+                Products
+              </button>
 
-          <a
-            href="#pricing"
-            className="hover:text-cyan-400 transition"
-          >
-            Pricing
-          </a>
+              <button
+                onClick={() =>
+                  scrollToSection("systems")
+                }
+                className="block w-full text-left"
+              >
+                Systems
+              </button>
 
-          <a
-            href="#contact"
-            className="hover:text-cyan-400 transition"
-          >
-            Contact
-          </a>
+              <button
+                onClick={() =>
+                  scrollToSection("contact")
+                }
+                className="block w-full text-left"
+              >
+                Contact
+              </button>
 
-        </div>
+            </div>
+
+          )
+        }
 
       </nav>
 
       {/* HERO */}
 
-      <section className="relative px-8 py-24 md:px-20 min-h-[120vh]">
+      <section className="relative pt-44 pb-32 px-8 md:px-20 min-h-screen flex items-center">
 
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-cyan-500/10 blur-[140px] rounded-full"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
 
-        <div className="relative z-10 max-w-7xl">
+          <div className="inline-flex items-center gap-2 border border-cyan-400/20 bg-cyan-400/10 text-cyan-300 rounded-full px-5 py-2 text-sm mb-8">
 
-          <div className="inline-block px-4 py-2 border border-cyan-400/20 rounded-full text-cyan-300 text-sm bg-cyan-400/5 mb-8">
             Enterprise Workflow Intelligence
+
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-black leading-tight max-w-6xl">
+          <h1 className="text-5xl md:text-7xl font-black leading-[1.05] max-w-6xl">
 
-            Industrial Software
-            <span className="text-cyan-400"> Systems </span>
+            Industrial
+            <span className="text-cyan-400">
+              {" "}Operational Systems{" "}
+            </span>
 
             For Manufacturing,
-            Operations &
-            Workflow Automation
+            Workflow Automation &
+            Enterprise Execution
 
           </h1>
 
-          <p className="mt-8 text-lg text-white/70 max-w-4xl leading-relaxed">
+          <p className="mt-10 text-lg text-white/65 leading-relaxed max-w-4xl">
 
-            Offices of Nawnit Nihal builds operational software systems for factories,
-            sourcing offices, production teams, and growing businesses —
-            integrating workflows, approvals, stock movement,
-            ERP layers, spreadsheets, reporting systems,
-            dashboards, and execution pipelines into unified digital infrastructure.
+            Offices of Nawnit Nihal develops enterprise-grade operational software systems for factories, sourcing offices, manufacturing operations, workflow automation, ERP overlays, production tracking, inventory systems, reporting infrastructure, dashboards, approval systems, AI-assisted workflows, and operational intelligence platforms.
 
           </p>
 
-          <div className="flex flex-wrap gap-4 mt-10">
+          <div className="flex flex-wrap gap-5 mt-12">
 
-            <button className="px-8 py-4 bg-cyan-400 text-black font-semibold rounded-xl hover:bg-cyan-300 transition">
-              Explore Products
+            <button
+              onClick={() =>
+                scrollToSection("products")
+              }
+              className="bg-cyan-400 text-black px-8 py-4 rounded-2xl font-black hover:bg-cyan-300 transition"
+            >
+              Explore Systems
             </button>
 
-            <button className="px-8 py-4 border border-white/20 rounded-xl hover:bg-white/5 transition">
-              Request Executive Demo
-            </button>
-
-            <button className="px-8 py-4 border border-cyan-400/20 text-cyan-300 rounded-xl hover:bg-cyan-400/10 transition">
-              AI Consultation
+            <button
+              onClick={() =>
+                scrollToSection("contact")
+              }
+              className="border border-white/10 px-8 py-4 rounded-2xl hover:bg-white/5 transition"
+            >
+              Request Executive Consultation
             </button>
 
           </div>
@@ -252,78 +541,109 @@ export default function App() {
 
       <section
         id="products"
-        className="px-8 md:px-20 py-20"
+        className="relative px-8 md:px-20 py-24"
       >
 
         <div className="max-w-7xl mx-auto">
 
-          <h2 className="text-4xl md:text-5xl font-black mb-4">
-            Operational Systems
-          </h2>
+          <div className="mb-16">
 
-          <p className="text-white/60 max-w-3xl mb-14 text-lg">
-            Enterprise-grade workflow systems, ERP overlays,
-            automation infrastructure, reporting layers,
-            dashboards, SaaS platforms, and operational intelligence.
-          </p>
+            <div className="text-cyan-400 uppercase tracking-[0.3em] text-sm mb-4">
+
+              Operational Infrastructure
+
+            </div>
+
+            <h2 className="text-4xl md:text-6xl font-black">
+
+              Enterprise Systems
+
+            </h2>
+
+          </div>
 
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-8">
 
-            {products.map((product, index) => (
+            {
+              products.map((product, index) => (
 
-              <div
-                key={index}
-                className="p-7 rounded-3xl border border-white/10 bg-white/[0.03] backdrop-blur-xl hover:border-cyan-400/40 hover:-translate-y-2 transition duration-300"
-              >
+                <div
+                  key={index}
+                  className="rounded-[30px] border border-white/10 bg-white/[0.03] backdrop-blur-2xl p-8 hover:border-cyan-400/30 hover:-translate-y-2 transition duration-300"
+                >
 
-                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-6">
 
-                  <h3 className="text-2xl font-bold text-cyan-400">
-                    {product.title}
-                  </h3>
+                    <h3 className="text-2xl font-black text-cyan-400">
 
-                  <div className="text-xs text-cyan-300 border border-cyan-400/20 px-2 py-1 rounded-full">
-                    LIVE
-                  </div>
+                      {product.title}
 
-                </div>
+                    </h3>
 
-                <div className="text-3xl font-black mb-2">
-                  {product.price}
-                </div>
+                    <div className="text-xs border border-cyan-400/20 text-cyan-300 px-3 py-1 rounded-full">
 
-                <div className="text-sm text-white/50 mb-6">
-                  Setup Time: {product.time}
-                </div>
-
-                <div className="space-y-3">
-
-                  {product.details.map((detail, i) => (
-
-                    <div
-                      key={i}
-                      className="text-sm text-white/70 flex items-start gap-2"
-                    >
-
-                      <span className="text-cyan-400">
-                        •
-                      </span>
-
-                      {detail}
+                      LIVE
 
                     </div>
 
-                  ))}
+                  </div>
+
+                  <div className="text-3xl font-black mb-2">
+
+                    {product.price}
+
+                  </div>
+
+                  <div className="text-white/40 text-sm mb-6">
+
+                    Setup Time:
+                    {" "}
+                    {product.time}
+
+                  </div>
+
+                  <div className="space-y-3">
+
+                    {
+                      product.details.map((detail, i) => (
+
+                        <div
+                          key={i}
+                          className="flex gap-3 text-white/70 text-sm"
+                        >
+
+                          <span className="text-cyan-400">
+
+                            •
+
+                          </span>
+
+                          <span>
+
+                            {detail}
+
+                          </span>
+
+                        </div>
+
+                      ))
+                    }
+
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      scrollToSection("contact")
+                    }
+                    className="mt-8 w-full py-3 rounded-xl bg-cyan-400 text-black font-black hover:bg-cyan-300 transition"
+                  >
+                    Request Consultation
+                  </button>
 
                 </div>
 
-                <button className="mt-8 w-full py-3 rounded-xl bg-cyan-400 text-black font-bold hover:bg-cyan-300 transition">
-                  Request Consultation
-                </button>
-
-              </div>
-
-            ))}
+              ))
+            }
 
           </div>
 
@@ -335,200 +655,301 @@ export default function App() {
 
       <section
         id="systems"
-        className="px-8 md:px-20 py-20"
+        className="px-8 md:px-20 py-24"
       >
 
-        <div className="max-w-7xl mx-auto rounded-[40px] border border-cyan-400/10 bg-white/[0.03] backdrop-blur-xl p-10 md:p-16">
+        <div className="max-w-7xl mx-auto rounded-[40px] border border-cyan-400/10 bg-white/[0.03] backdrop-blur-2xl p-10 md:p-16">
 
-          <div className="text-cyan-400 text-sm tracking-[0.3em] uppercase mb-4">
-            Powered By OpenAI
+          <div className="text-cyan-400 uppercase tracking-[0.3em] text-sm mb-5">
+
+            AI Operational Intelligence
+
           </div>
 
           <h2 className="text-4xl md:text-6xl font-black leading-tight max-w-5xl">
-            AI Assisted Operational Decision Systems
+
+            Enterprise AI Systems
+            For Operational Decision Infrastructure
+
           </h2>
 
-          <p className="mt-8 text-white/70 text-lg max-w-4xl leading-relaxed">
+          <p className="mt-10 text-lg text-white/65 max-w-4xl leading-relaxed">
 
-            ONN systems can integrate AI-assisted operational analysis,
-            workflow recommendations, reporting intelligence,
-            buyer communication support,
-            escalation logic, and business monitoring systems.
+            ONN systems integrate AI-assisted reporting, operational analysis, workflow recommendations, production visibility, escalation systems, buyer communication support, and manufacturing execution intelligence.
 
           </p>
-
-          <div className="grid md:grid-cols-3 gap-6 mt-14">
-
-            <div className="p-6 rounded-2xl border border-white/10 bg-black/30">
-
-              <h3 className="text-cyan-400 text-xl font-bold">
-                AI Reporting
-              </h3>
-
-              <p className="text-white/60 mt-3">
-                Executive summaries, operational insights,
-                and production analytics.
-              </p>
-
-            </div>
-
-            <div className="p-6 rounded-2xl border border-white/10 bg-black/30">
-
-              <h3 className="text-cyan-400 text-xl font-bold">
-                AI Workflow Intelligence
-              </h3>
-
-              <p className="text-white/60 mt-3">
-                Intelligent operational flow suggestions
-                and escalation detection.
-              </p>
-
-            </div>
-
-            <div className="p-6 rounded-2xl border border-white/10 bg-black/30">
-
-              <h3 className="text-cyan-400 text-xl font-bold">
-                AI Communication
-              </h3>
-
-              <p className="text-white/60 mt-3">
-                AI-assisted buyer communication,
-                summaries, and automation support.
-              </p>
-
-            </div>
-
-          </div>
 
         </div>
 
       </section>
 
-      {/* CONTACT FORM */}
+      {/* CONTACT */}
 
       <section
         id="contact"
         className="px-8 md:px-20 py-24"
       >
 
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto rounded-[40px] border border-white/10 bg-white/[0.03] backdrop-blur-2xl p-10 md:p-16">
 
-          <div className="text-cyan-400 tracking-[0.3em] uppercase text-sm mb-4">
+          <div className="text-cyan-400 uppercase tracking-[0.3em] text-sm mb-5">
+
             Enterprise Inquiry
+
           </div>
 
           <h2 className="text-4xl md:text-6xl font-black">
+
             Request Consultation
+
           </h2>
 
-          <p className="mt-6 text-white/60 text-lg leading-relaxed">
-            Tell us about your factory,
-            workflows, reporting requirements,
-            approvals, ERP environment,
-            operational bottlenecks, or automation goals.
+          <p className="mt-6 text-white/65 max-w-3xl leading-relaxed">
+
+            Tell ONN about your workflows, approvals, ERP environment, operational bottlenecks, production systems, reporting requirements, dashboards, inventory logic, or automation goals.
+
           </p>
 
-          <div className="grid md:grid-cols-2 gap-5 mt-14">
+          <div className="grid md:grid-cols-2 gap-5 mt-12">
 
             <input
-              placeholder="Full Name"
-              className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
+              value={form.name}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  name: e.target.value
+                })
+              }
+              placeholder="Full Name *"
+              className="bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
             />
 
             <input
+              value={form.company}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  company: e.target.value
+                })
+              }
               placeholder="Company Name"
-              className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
+              className="bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
             />
 
             <input
-              placeholder="Phone Number"
-              className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
+              value={form.phone}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  phone: e.target.value
+                })
+              }
+              placeholder="Phone Number *"
+              className="bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
             />
 
             <input
+              value={form.email}
+              onChange={(e) =>
+                setForm({
+                  ...form,
+                  email: e.target.value
+                })
+              }
               placeholder="Email Address"
-              className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
+              className="bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
             />
 
           </div>
 
           <textarea
             rows="6"
+            value={form.requirement}
+            onChange={(e) =>
+              setForm({
+                ...form,
+                requirement:
+                  e.target.value
+              })
+            }
             placeholder="Describe your operational requirements..."
-            className="mt-5 w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
-          ></textarea>
+            className="mt-5 w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
+          />
 
-          <button className="mt-8 px-10 py-5 bg-cyan-400 text-black font-black rounded-2xl hover:bg-cyan-300 transition text-lg">
-            Submit Inquiry
+          <button
+            onClick={submitInquiry}
+            disabled={sendingInquiry}
+            className="mt-8 px-10 py-5 bg-cyan-400 text-black rounded-2xl font-black hover:bg-cyan-300 transition disabled:opacity-50"
+          >
+
+            {
+              sendingInquiry
+                ? "Submitting..."
+                : "Submit Enterprise Inquiry"
+            }
+
           </button>
 
-          <div className="mt-10 text-white/40 text-sm">
-            Powered by ONN Systems Infrastructure + OpenAI Intelligence
-          </div>
+          {
+            inquirySuccess && (
+
+              <div className="mt-6 text-cyan-400 font-semibold">
+
+                Inquiry submitted successfully.
+                ONN has received your request.
+
+              </div>
+
+            )
+          }
 
         </div>
 
       </section>
 
-      {/* JIM AI POPUP */}
+      {/* FOOTER */}
+
+      <footer className="px-8 md:px-20 py-12 border-t border-white/10 text-white/40 text-sm">
+
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 justify-between">
+
+          <div>
+
+            Offices of Nawnit Nihal
+            <br />
+            Operational Software Systems
+
+          </div>
+
+          <div>
+
+            Enterprise Workflow Infrastructure
+            •
+            ERP
+            •
+            AI Systems
+            •
+            Automation
+
+          </div>
+
+        </div>
+
+      </footer>
+
+      {/* JIM */}
 
       {
         showChat && (
 
-          <div className="fixed bottom-6 right-6 z-[9999] w-[360px] rounded-3xl border border-cyan-400/20 bg-black/95 backdrop-blur-2xl shadow-2xl overflow-hidden">
+          <div className="fixed bottom-6 right-6 z-[999999] w-[380px] max-w-[calc(100vw-24px)] rounded-[30px] border border-cyan-400/20 bg-black/95 backdrop-blur-2xl shadow-2xl overflow-hidden">
 
             <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
 
               <div>
 
-                <div className="text-cyan-400 font-black text-lg">
+                <div className="text-cyan-400 text-xl font-black">
+
                   JIM
+
                 </div>
 
                 <div className="text-xs text-white/50">
-                  ONN AI Executive Assistant
+
+                  ONN Executive AI Consultant
+
                 </div>
 
               </div>
 
               <button
-                onClick={() => setShowChat(false)}
-                className="text-white/40 hover:text-white text-2xl"
+                onClick={() =>
+                  setShowChat(false)
+                }
+                className="text-2xl text-white/40 hover:text-white"
               >
                 ×
               </button>
 
             </div>
 
-            <div className="p-5 space-y-4">
+            <div className="h-[360px] overflow-y-auto p-5 space-y-4">
 
-              <div className="bg-cyan-400/10 border border-cyan-400/20 rounded-2xl p-4 text-sm text-white/80 leading-relaxed">
+              {
+                messages.map((msg, index) => (
 
-                Hello. I'm Jim.
+                  <div
+                    key={index}
+                    className={
+                      msg.sender === "user"
+                        ? "flex justify-end"
+                        : "flex justify-start"
+                    }
+                  >
 
-                I help businesses understand ONN operational systems,
-                ERP integrations, workflow automation,
-                factory management systems,
-                dashboards, reporting systems,
-                CRM infrastructure, SaaS platforms,
-                AI operational intelligence,
-                and manufacturing execution workflows.
+                    <div
+                      className={
+                        msg.sender === "user"
+                          ? "max-w-[85%] bg-cyan-400 text-black rounded-2xl px-4 py-3 text-sm"
+                          : "max-w-[85%] bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white/80 whitespace-pre-line"
+                      }
+                    >
 
-              </div>
+                      {msg.text}
+
+                    </div>
+
+                  </div>
+
+                ))
+              }
+
+              {
+                jimLoading && (
+
+                  <div className="text-cyan-400 text-sm">
+
+                    Jim is analyzing operational requirements...
+
+                  </div>
+
+                )
+              }
+
+              <div ref={messagesEndRef}></div>
+
+            </div>
+
+            <div className="border-t border-white/10 p-4">
 
               <textarea
-                placeholder="Ask Jim about ONN systems..."
-                className="w-full h-28 bg-white/5 border border-white/10 rounded-2xl px-4 py-3 outline-none focus:border-cyan-400 resize-none"
+                value={jimInput}
+                onChange={(e) =>
+                  setJimInput(
+                    e.target.value
+                  )
+                }
+                placeholder="Ask Jim about ERP systems, workflow automation, dashboards, inventory systems, reporting, factory operations..."
+                className="w-full h-24 resize-none bg-white/5 border border-white/10 rounded-2xl px-4 py-3 outline-none focus:border-cyan-400"
               />
 
-              <button className="w-full py-3 rounded-2xl bg-cyan-400 text-black font-black hover:bg-cyan-300 transition">
-                Start AI Consultation
+              <button
+                onClick={sendJimMessage}
+                disabled={jimLoading}
+                className="w-full mt-4 py-3 rounded-2xl bg-cyan-400 text-black font-black hover:bg-cyan-300 transition disabled:opacity-50"
+              >
+
+                {
+                  jimLoading
+                    ? "Processing..."
+                    : "Start AI Consultation"
+                }
+
               </button>
 
-              <div className="text-[11px] text-white/30 leading-relaxed">
+              <div className="mt-3 text-[11px] text-white/30 leading-relaxed">
 
-                Live conversation transcripts can later be routed
-                directly to Telegram using OpenAI + Telegram Bot integration.
+                Live conversations are securely logged into ONN operational infrastructure and can be escalated directly to executive operators via Telegram relay systems.
 
               </div>
 
