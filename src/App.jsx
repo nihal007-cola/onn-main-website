@@ -4,31 +4,64 @@ export default function App() {
 
       {/* NAVBAR */}
 
-      <nav className="flex items-center justify-between px-8 py-6 border-b border-white/10 backdrop-blur-md">
+      <nav className="sticky top-0 z-50 flex items-center justify-between px-6 py-3 border-b border-white/10 bg-black/80 backdrop-blur-md">
+
+        {/* LEFT SIDE */}
+
         <div className="flex items-center gap-4">
+
           <img
             src="/logo.png"
             alt="ONN Logo"
-            className="w-28 h-28 object-contain"
+            className="w-20 md:w-28 h-auto object-contain"
           />
 
           <div>
-            <h1 className="text-xl font-bold tracking-wide">
+            <h1 className="text-lg md:text-2xl font-bold tracking-wide leading-tight">
               Offices of Nawnit Nihal
             </h1>
 
-            <p className="text-sm text-cyan-400">
+            <p className="text-xs md:text-sm text-cyan-400">
               Operational Software Systems
             </p>
           </div>
+
         </div>
 
+        {/* RIGHT SIDE */}
+
         <div className="hidden md:flex gap-8 text-sm text-white/70">
-          <a href="#">Products</a>
-          <a href="#">Industries</a>
-          <a href="#">Solutions</a>
-          <a href="#">Contact</a>
+
+          <a
+            href="#"
+            className="hover:text-cyan-400 transition"
+          >
+            Products
+          </a>
+
+          <a
+            href="#"
+            className="hover:text-cyan-400 transition"
+          >
+            Industries
+          </a>
+
+          <a
+            href="#"
+            className="hover:text-cyan-400 transition"
+          >
+            Solutions
+          </a>
+
+          <a
+            href="#"
+            className="hover:text-cyan-400 transition"
+          >
+            Contact
+          </a>
+
         </div>
+
       </nav>
 
       {/* HERO SECTION */}
@@ -41,22 +74,33 @@ export default function App() {
 
         <div className="relative z-10 max-w-6xl">
 
+          {/* TAG */}
+
           <div className="inline-block px-4 py-2 border border-cyan-400/20 rounded-full text-cyan-300 text-sm bg-cyan-400/5 mb-8">
             Enterprise Workflow Intelligence
           </div>
 
+          {/* HEADLINE */}
+
           <h1 className="text-5xl md:text-7xl font-black leading-tight max-w-5xl">
+
             Industrial Software
             <span className="text-cyan-400"> Systems </span>
+
             For Manufacturing,
             Operations & Workflow Automation
+
           </h1>
 
+          {/* DESCRIPTION */}
+
           <p className="mt-8 text-lg text-white/70 max-w-3xl leading-relaxed">
+
             Offices of Nawnit Nihal builds operational software systems for factories,
             sourcing offices, production teams, and growing businesses —
             integrating workflows, approvals, stock movement,
             ERP layers, and execution pipelines into unified digital systems.
+
           </p>
 
           {/* BUTTONS */}
@@ -77,41 +121,102 @@ export default function App() {
 
           </div>
 
-          {/* STATS */}
+          {/* PRODUCT CARDS */}
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20">
 
-            <div className="p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
-              <h2 className="text-3xl font-bold text-cyan-400">ERP</h2>
+            {/* ERP */}
+
+            <div className="p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md hover:border-cyan-400/30 transition">
+
+              <h2 className="text-3xl font-bold text-cyan-400">
+                ERP
+              </h2>
+
               <p className="text-white/60 mt-2 text-sm">
                 Compatibility Layers
               </p>
+
+              <div className="mt-5 text-xs text-white/40 uppercase tracking-wider">
+                Starting From
+              </div>
+
+              <div className="mt-1 text-2xl font-bold">
+                ₹1.5L
+              </div>
+
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
-              <h2 className="text-3xl font-bold text-cyan-400">CRM</h2>
+            {/* CRM */}
+
+            <div className="p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md hover:border-cyan-400/30 transition">
+
+              <h2 className="text-3xl font-bold text-cyan-400">
+                CRM
+              </h2>
+
               <p className="text-white/60 mt-2 text-sm">
                 Sales Automation Systems
               </p>
+
+              <div className="mt-5 text-xs text-white/40 uppercase tracking-wider">
+                Starting From
+              </div>
+
+              <div className="mt-1 text-2xl font-bold">
+                ₹85K
+              </div>
+
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
-              <h2 className="text-3xl font-bold text-cyan-400">SaaS</h2>
+            {/* SAAS */}
+
+            <div className="p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md hover:border-cyan-400/30 transition">
+
+              <h2 className="text-3xl font-bold text-cyan-400">
+                SaaS
+              </h2>
+
               <p className="text-white/60 mt-2 text-sm">
                 Workflow Platforms
               </p>
+
+              <div className="mt-5 text-xs text-white/40 uppercase tracking-wider">
+                Starting From
+              </div>
+
+              <div className="mt-1 text-2xl font-bold">
+                ₹2L
+              </div>
+
             </div>
 
-            <div className="p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md">
-              <h2 className="text-3xl font-bold text-cyan-400">Live</h2>
+            {/* LIVE */}
+
+            <div className="p-6 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md hover:border-cyan-400/30 transition">
+
+              <h2 className="text-3xl font-bold text-cyan-400">
+                Live
+              </h2>
+
               <p className="text-white/60 mt-2 text-sm">
                 Analytics & Monitoring
               </p>
+
+              <div className="mt-5 text-xs text-white/40 uppercase tracking-wider">
+                Monitoring
+              </div>
+
+              <div className="mt-1 text-2xl font-bold">
+                24/7
+              </div>
+
             </div>
 
           </div>
 
         </div>
+
       </section>
 
     </div>
