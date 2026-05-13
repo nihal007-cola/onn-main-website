@@ -30,21 +30,46 @@ app.get("/api/health", (req, res) => {
   res.json({
 
     success: true,
+
     system:
       "ONN NODE PROXY",
-    status: "RUNNING"
+
+    status: "RUNNING",
+
+    appsScriptConfigured:
+      !!APPS_SCRIPT_URL
 
   })
 
 })
 
 /********************************************************
- * API PROXY
+ * MAIN API PROXY
  ********************************************************/
 
 app.post("/api", async (req, res) => {
 
   try {
+
+    if (!APPS_SCRIPT_URL) {
+
+      return res.status(500).json({
+
+        success: false,
+
+        error:
+          "Missing APPS_SCRIPT_URL environment variable"
+
+      })
+
+    }
+
+    console.log(
+
+      "FORWARDING REQUEST:",
+      req.body
+
+    )
 
     const response =
       await fetch(
@@ -62,26 +87,76 @@ app.post("/api", async (req, res) => {
 
           },
 
-          body: JSON.stringify(
-            req.body
-          )
+          body:
+            JSON.stringify(
+              req.body
+            ),
+
+          redirect: "follow"
 
         }
 
       )
 
-    const data =
-      await response.json()
+    const text =
+      await response.text()
 
-    res.json(data)
+    console.log(
+
+      "APPS SCRIPT RESPONSE:",
+      text
+
+    )
+
+    if (!text || !text.trim()) {
+
+      return res.status(500).json({
+
+        success: false,
+
+        error:
+          "Apps Script returned empty response"
+
+      })
+
+    }
+
+    try {
+
+      const data =
+        JSON.parse(text)
+
+      return res.json(data)
+
+    } catch (jsonError) {
+
+      return res.status(500).json({
+
+        success: false,
+
+        error:
+          "Invalid JSON returned from Apps Script",
+
+        rawResponse:
+          text
+
+      })
+
+    }
 
   } catch (error) {
 
-    console.error(error)
+    console.error(
 
-    res.status(500).json({
+      "SERVER ERROR:",
+      error
+
+    )
+
+    return res.status(500).json({
 
       success: false,
+
       error:
         error.toString()
 
@@ -113,9 +188,13 @@ app.get("*", (req, res) => {
   res.sendFile(
 
     path.join(
+
       __dirname,
+
       "dist",
+
       "index.html"
+
     )
 
   )
@@ -130,8 +209,7 @@ app.listen(PORT, () => {
 
   console.log(
 
-    "ONN SERVER RUNNING ON PORT:",
-    PORT
+    `ONN SERVER RUNNING ON PORT ${PORT}`
 
   )
 
