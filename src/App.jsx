@@ -10,6 +10,9 @@ export default function App() {
   const [inquirySuccess, setInquirySuccess] =
     useState(false)
 
+  const [inquiryError, setInquiryError] =
+    useState(false)
+
   const [mobileMenu, setMobileMenu] =
     useState(false)
 
@@ -105,6 +108,14 @@ export default function App() {
       !form.phone ||
       !form.requirement
     ) {
+
+      setInquiryError(true)
+
+      setTimeout(() => {
+
+        setInquiryError(false)
+
+      }, 3000)
 
       return
 
@@ -639,7 +650,7 @@ export default function App() {
                   e.target.value
               })
             }
-            placeholder="Describe your operational requirements..."
+            placeholder="Describe your operational requirements... *"
             className="mt-5 w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 outline-none focus:border-cyan-400"
           />
 
@@ -804,6 +815,53 @@ export default function App() {
 
                 Offices of Nawnit Nihal has received your enterprise inquiry.
                 An executive will contact you shortly.
+
+              </p>
+
+            </div>
+
+          </div>
+
+        )
+      }
+
+      {/* ERROR POPUP */}
+
+      {
+        inquiryError && (
+
+          <div className="fixed top-8 right-8 z-[99999999] w-[390px] max-w-[calc(100vw-24px)] overflow-hidden rounded-[32px] bg-[#160607] border border-red-500/20 shadow-[0_0_80px_rgba(255,0,0,0.35)]">
+
+            <div className="absolute top-[-120px] right-[-80px] w-[240px] h-[240px] rounded-full bg-red-500/30 blur-[100px]"></div>
+
+            <button
+              onClick={() =>
+                setInquiryError(false)
+              }
+              className="absolute top-5 right-5 z-20 flex items-center justify-center w-10 h-10 rounded-full bg-[#2a0a0d] border border-red-500/30 text-red-400 text-xl font-black hover:bg-red-600 hover:text-white transition"
+            >
+
+              ×
+
+            </button>
+
+            <div className="relative z-10 px-7 py-8">
+
+              <div className="w-16 h-16 rounded-full bg-red-500 text-white text-3xl font-black flex items-center justify-center shadow-[0_0_40px_rgba(255,0,0,0.6)]">
+
+                !
+
+              </div>
+
+              <h3 className="mt-5 text-3xl font-black text-white">
+
+                Missing Information
+
+              </h3>
+
+              <p className="mt-4 text-white/70 leading-[1.8]">
+
+                Please fill all mandatory fields before submitting your enterprise inquiry.
 
               </p>
 
