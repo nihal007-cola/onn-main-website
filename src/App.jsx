@@ -707,9 +707,9 @@ export default function App() {
       {
         showONNModal && (
 
-          <div className="fixed inset-0 z-[99999999] flex items-center justify-center bg-black/80 backdrop-blur-sm px-5">
+          <div className="fixed inset-0 z-[99999999] overflow-y-auto bg-black/80 backdrop-blur-sm px-4 py-10 md:py-16 flex justify-center items-start sm:items-center">
 
-            <div className="relative w-full max-w-[720px] overflow-hidden rounded-[40px] border border-red-500/20 bg-[#0b0712] shadow-[0_0_120px_rgba(255,0,0,0.4)]">
+            <div className="relative my-auto w-full max-w-[720px] overflow-hidden rounded-[32px] md:rounded-[40px] border border-red-500/20 bg-[#0b0712] shadow-[0_0_120px_rgba(255,0,0,0.4)]">
 
               <div className="absolute top-[-180px] right-[-100px] w-[420px] h-[420px] rounded-full bg-red-500/30 blur-[120px]"></div>
 
@@ -719,14 +719,14 @@ export default function App() {
                 onClick={() =>
                   setShowONNModal(false)
                 }
-                className="absolute top-6 right-6 z-20 flex items-center justify-center w-14 h-14 rounded-full bg-[#1d0b12] border border-red-500/30 text-red-500 text-3xl font-black hover:bg-red-600 hover:text-white transition"
+                className="absolute top-4 right-4 md:top-6 md:right-6 z-20 flex items-center justify-center w-10 h-10 md:w-14 md:h-14 rounded-full bg-[#1d0b12] border border-red-500/30 text-red-500 text-2xl md:text-3xl font-black hover:bg-red-600 hover:text-white transition"
               >
 
                 ×
 
               </button>
 
-              <div className="relative z-10 px-8 md:px-16 py-16 md:py-20 text-center">
+              <div className="relative z-10 px-6 md:px-16 py-14 md:py-20 text-center">
 
                 <div className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-red-500 text-white text-[11px] font-black tracking-[0.25em] uppercase shadow-[0_0_35px_rgba(255,0,0,0.6)]">
 
@@ -734,7 +734,7 @@ export default function App() {
 
                 </div>
 
-                <h2 className="mt-10 text-[48px] md:text-[82px] leading-[0.88] tracking-[-0.06em] font-black text-white">
+                <h2 className="mt-8 md:mt-10 text-[36px] md:text-[82px] leading-[0.95] md:leading-[0.88] tracking-[-0.04em] md:tracking-[-0.06em] font-black text-white">
 
                   Need Immediate
 
@@ -746,7 +746,7 @@ export default function App() {
 
                 </h2>
 
-                <p className="mt-8 max-w-2xl mx-auto text-[16px] md:text-[20px] leading-[1.9] text-white/70">
+                <p className="mt-6 md:mt-8 max-w-2xl mx-auto text-[14px] md:text-[20px] leading-[1.7] md:leading-[1.9] text-white/70">
 
                   ERP systems,
                   operational intelligence,
@@ -760,7 +760,7 @@ export default function App() {
                   href="https://jamesmoriarty.in/onnwork"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative inline-flex items-center justify-center mt-12 overflow-hidden rounded-2xl bg-gradient-to-r from-red-700 via-red-500 to-red-600 px-14 py-6 text-lg md:text-xl font-black tracking-[0.08em] text-white shadow-[0_0_70px_rgba(255,0,0,0.9)] hover:scale-[1.04] transition duration-300"
+                  className="relative inline-flex items-center justify-center mt-10 md:mt-12 overflow-hidden rounded-2xl bg-gradient-to-r from-red-700 via-red-500 to-red-600 px-10 md:px-14 py-4 md:py-6 text-base md:text-xl font-black tracking-[0.08em] text-white shadow-[0_0_70px_rgba(255,0,0,0.9)] hover:scale-[1.04] transition duration-300"
                 >
 
                   <div className="absolute inset-0 animate-pulse bg-white/10"></div>
@@ -773,7 +773,7 @@ export default function App() {
 
                 </a>
 
-                <div className="mt-10 text-sm text-white/35">
+                <div className="mt-8 md:mt-10 text-xs md:text-sm text-white/35">
 
                   Continue browsing Offices of Nawnit Nihal
 
