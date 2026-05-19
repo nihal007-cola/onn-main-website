@@ -313,6 +313,17 @@ export default function App() {
             >
               Request Demo
             </button>
+            <button
+            onClick={() =>
+            window.location.href =
+           "/indian-desk"
+           }
+           className="hover:text-cyan-400 transition"
+           >
+
+           India Desk
+
+          </button>
 
           </div>
 
