@@ -1,164 +1,472 @@
-import { useState } from "react"
+import { useState } from "react";
 
 export default function ONNIndiaDesk() {
+  const API_URL = "/api";
 
-const [form,setForm]=useState({
-name:"",
-company:"",
-email:"",
-country:"",
-requirement:""
-})
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    company: "",
+    email: "",
+    country: "",
+    requirement: "",
+  });
 
-return (
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-<div className="bg-[#020617] text-white min-h-screen">
+  const [popup, setPopup] = useState({
+    show: false,
+    title: "",
+    message: "",
+    isError: false,
+  });
 
-<div className="fixed inset-0 pointer-events-none">
-<div className="absolute top-[-200px] left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-cyan-500/10 blur-[180px] rounded-full"/>
-</div>
+  function handleChange(e) {
+    setForm({
+      ...form,
+      [e.target.name]: e.target.value,
+    });
+  }
 
-<section className="relative pt-40 pb-28 px-8">
+  function showPopup(title, message, isError = false) {
+    setPopup({
+      show: true,
+      title,
+      message,
+      isError,
+    });
 
-<div className="max-w-7xl mx-auto">
+    setTimeout(() => {
+      setPopup({
+        show: false,
+        title: "",
+        message: "",
+        isError: false,
+      });
+    }, 5000);
+  }
 
-<div className="inline-flex px-5 py-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 text-cyan-300">
+  async function submitInquiry(e) {
+    e.preventDefault();
 
-ONN INDIA DESK
+    if (!form.name.trim() || !form.phone.trim()) {
+      showPopup(
+        "Missing Information",
+        "Please fill all mandatory fields before submitting your India Desk inquiry.",
+        true
+      );
+      return;
+    }
 
-</div>
+    try {
+      setLoading(true);
 
-<h1 className="mt-8 text-5xl md:text-7xl font-black leading-[1.05]">
+      const response = await fetch(API_URL, {
+        method: "POST",
 
-Your Dedicated
-<span className="text-cyan-400">
-{" "}Operations Desk{" "}
-</span>
-in India
+        headers: {
+          "Content-Type": "application/json",
+        },
 
-</h1>
+        body: JSON.stringify({
+          action: "submit_inquiry",
 
-<p className="mt-10 text-white/65 text-lg max-w-4xl">
+          name: form.name,
+          phone: form.phone,
+          company: form.company,
+          email: form.email,
+          country: form.country,
+          requirement: form.requirement,
 
-We become your local face in India.
-Factory sourcing.
-Vendor verification.
-Factory visits.
-Quality control.
-Logistics coordination.
+          source: window.location.href,
+        }),
+      });
 
-</p>
+      const text = await response.text();
 
-<a
-href="#contact"
-className="inline-block mt-10 bg-cyan-400 text-black px-8 py-4 rounded-2xl font-black"
->
+      let data = {};
 
-Schedule Consultation
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = {};
+      }
 
-</a>
+      if (data.success) {
+        showPopup(
+          "Inquiry Submitted",
+          "Your India Desk inquiry has been received.\nONN will contact you shortly."
+        );
 
-</div>
+        setForm({
+          name: "",
+          phone: "",
+          company: "",
+          email: "",
+          country: "",
+          requirement: "",
+        });
+      } else {
+        showPopup(
+          "Submission Failed",
+          "Unable to submit inquiry. Please try again.",
+          true
+        );
+      }
+    } catch (err) {
+      console.error(err);
 
-</section>
+      showPopup(
+        "Network Error",
+        "Unable to reach ONN servers.",
+        true
+      );
+    } finally {
+      setLoading(false);
+    }
+  }
 
-<section className="px-8 py-24">
+  function scrollToContact() {
+    document
+      .getElementById("contact")
+      ?.scrollIntoView({
+        behavior: "smooth",
+      });
 
-<div className="max-w-7xl mx-auto">
+    setMobileMenuOpen(false);
+  }
 
-<h2 className="text-5xl font-black">
+  return (
+    <div className="bg-[#020617] text-white min-h-screen overflow-x-hidden">
 
-Why Buyers Need India Desk
+      <div className="fixed inset-0 pointer-events-none">
 
-</h2>
+        <div className="absolute top-[-200px] left-1/2 -translate-x-1/2 w-[900px] h-[900px] bg-cyan-500/10 blur-[180px] rounded-full" />
 
-<div className="grid md:grid-cols-2 gap-8 mt-14">
+      </div>
 
-{[
-"Factory Verification",
-"On Ground Presence",
-"Quality Inspection",
-"Export Coordination"
-].map(item=>(
+      {/* HEADER */}
 
-<div
-key={item}
-className="rounded-[30px] border border-white/10 bg-white/[0.03] p-8"
->
+      <nav className="fixed top-0 left-0 w-full z-[99999] border-b border-white/10 bg-black/70 backdrop-blur-2xl">
 
-<div className="text-cyan-400 font-black">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
 
-{item}
+          <a
+            href="/"
+            className="flex items-center gap-4"
+          >
 
-</div>
+            <img
+              src="/logo.png"
+              alt="ONN"
+              className="w-16 md:w-20 object-contain"
+            />
 
-</div>
+            <div>
 
-))}
+              <h1 className="font-black text-lg md:text-2xl">
 
-</div>
+                Offices of Nawnit Nihal
 
-</div>
+              </h1>
 
-</section>
+              <p className="text-cyan-400 text-xs">
 
-<section
-id="contact"
-className="px-8 pb-32"
->
+                India Operations Desk
 
-<div className="max-w-5xl mx-auto rounded-[40px] border border-white/10 bg-white/[0.03] p-10">
+              </p>
 
-<h2 className="text-5xl font-black">
+            </div>
 
-Ready To Start?
+          </a>
 
-</h2>
+          <div className="hidden md:flex gap-8">
 
-<div className="grid md:grid-cols-2 gap-5 mt-10">
+            <a
+              href="/"
+              className="hover:text-cyan-400"
+            >
+              Home
+            </a>
 
-<input
-placeholder="Name"
-className="bg-black/40 rounded-2xl px-5 py-4"
-/>
+            <a
+              href="/indian-desk"
+              className="text-cyan-400"
+            >
+              India Desk
+            </a>
 
-<input
-placeholder="Company"
-className="bg-black/40 rounded-2xl px-5 py-4"
-/>
+            <button
+              onClick={scrollToContact}
+              className="hover:text-cyan-400"
+            >
+              Contact
+            </button>
 
-<input
-placeholder="Business Email"
-className="bg-black/40 rounded-2xl px-5 py-4"
-/>
+          </div>
 
-<input
-placeholder="Country"
-className="bg-black/40 rounded-2xl px-5 py-4"
-/>
+          <button
+            className="md:hidden text-3xl"
+            onClick={() =>
+              setMobileMenuOpen(
+                !mobileMenuOpen
+              )
+            }
+          >
+            ☰
+          </button>
 
-</div>
+        </div>
 
-<textarea
-rows="5"
-placeholder="Requirement"
-className="mt-5 w-full bg-black/40 rounded-2xl px-5 py-4"
-/>
+        {mobileMenuOpen && (
 
-<button
-className="mt-8 bg-cyan-400 text-black px-10 py-5 rounded-2xl font-black"
->
+          <div className="md:hidden border-t border-white/10 bg-black/95 px-6 py-5 space-y-4">
 
-Send Inquiry
+            <a
+              href="/"
+              className="block"
+            >
+              Home
+            </a>
 
-</button>
+            <a
+              href="/indian-desk"
+              className="block text-cyan-400"
+            >
+              India Desk
+            </a>
 
-</div>
+            <button
+              onClick={scrollToContact}
+              className="block"
+            >
+              Contact
+            </button>
 
-</section>
+          </div>
 
-</div>
+        )}
 
-)
+      </nav>
 
+      {/* HERO */}
+
+      <section className="pt-44 pb-32 px-8">
+
+        <div className="max-w-7xl mx-auto">
+
+          <div className="inline-flex px-5 py-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 text-cyan-300">
+
+            ONN INDIA DESK
+
+          </div>
+
+          <h1 className="mt-8 text-5xl md:text-7xl font-black leading-[1.05]">
+
+            Your Dedicated
+
+            <span className="text-cyan-400">
+
+              {" "}Operations Desk{" "}
+
+            </span>
+
+            in India
+
+          </h1>
+
+          <p className="mt-10 text-lg text-white/65 max-w-4xl">
+
+            We become your local face in India.
+            Factory sourcing.
+            Vendor verification.
+            Factory visits.
+            Quality control.
+            Logistics coordination.
+
+          </p>
+
+          <button
+            onClick={scrollToContact}
+            className="mt-10 bg-cyan-400 text-black px-8 py-4 rounded-2xl font-black"
+          >
+
+            Schedule Consultation
+
+          </button>
+
+        </div>
+
+      </section>
+
+      {/* SERVICES */}
+
+      <section className="px-8 py-24">
+
+        <div className="max-w-7xl mx-auto">
+
+          <h2 className="text-5xl font-black">
+
+            Why Buyers Need India Desk
+
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-8 mt-14">
+
+            {[
+              "Factory Verification",
+              "On Ground Presence",
+              "Quality Inspection",
+              "Export Coordination",
+            ].map((item) => (
+
+              <div
+                key={item}
+                className="rounded-[30px] border border-white/10 bg-white/[0.03] p-8"
+              >
+
+                <div className="text-cyan-400 font-black">
+
+                  {item}
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* FORM */}
+
+      <section
+        id="contact"
+        className="px-8 pb-32"
+      >
+
+        <div className="max-w-5xl mx-auto rounded-[40px] border border-white/10 bg-white/[0.03] p-10">
+
+          <h2 className="text-5xl font-black">
+
+            Ready To Start?
+
+          </h2>
+
+          <form
+            onSubmit={submitInquiry}
+          >
+
+            <div className="grid md:grid-cols-2 gap-5 mt-10">
+
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Name *"
+                className="bg-black/40 rounded-2xl px-5 py-4"
+              />
+
+              <input
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="Whatsapp Number *"
+                className="bg-black/40 rounded-2xl px-5 py-4"
+              />
+
+              <input
+                name="company"
+                value={form.company}
+                onChange={handleChange}
+                placeholder="Company"
+                className="bg-black/40 rounded-2xl px-5 py-4"
+              />
+
+              <input
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Business Email"
+                className="bg-black/40 rounded-2xl px-5 py-4"
+              />
+
+              <input
+                name="country"
+                value={form.country}
+                onChange={handleChange}
+                placeholder="Country"
+                className="bg-black/40 rounded-2xl px-5 py-4"
+              />
+
+            </div>
+
+            <textarea
+              rows="5"
+              name="requirement"
+              value={form.requirement}
+              onChange={handleChange}
+              placeholder="Requirement"
+              className="mt-5 w-full bg-black/40 rounded-2xl px-5 py-4"
+            />
+
+            <button
+              disabled={loading}
+              className="mt-8 px-10 py-5 bg-cyan-400 text-black rounded-2xl font-black"
+            >
+
+              {loading
+                ? "Submitting..."
+                : "Send Inquiry"}
+
+            </button>
+
+          </form>
+
+        </div>
+
+      </section>
+
+      {/* POPUP */}
+
+      {popup.show && (
+
+        <div className="fixed top-8 right-8 z-[99999999] w-[390px] rounded-[32px] overflow-hidden">
+
+          <div
+            className={
+              popup.isError
+                ? "bg-[#160607] border border-red-500/20"
+                : "bg-[#04150f] border border-emerald-400/20"
+            }
+          >
+
+            <div className="px-7 py-8">
+
+              <h3 className="text-3xl font-black">
+
+                {popup.title}
+
+              </h3>
+
+              <p className="mt-4 text-white/70 whitespace-pre-line">
+
+                {popup.message}
+
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
+
+    </div>
+  );
 }
