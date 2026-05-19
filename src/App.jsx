@@ -318,7 +318,7 @@ export default function App() {
             window.location.href =
            "/indian-desk"
            }
-           className="hover:text-cyan-400 transition"
+           className="bg-green-500 text-black px-5 py-2 rounded-xl font-bold hover:bg-green-400 transition shadow-[0_0_30px_rgba(34,197,94,0.35)]"
            >
 
            India Desk
